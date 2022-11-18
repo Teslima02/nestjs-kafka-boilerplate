@@ -1,5 +1,5 @@
 import { SharedEntity } from '../common/model/sharedEntity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 export enum CoreProcessStatus {
   PENDING = 'pending',
@@ -67,6 +67,11 @@ export class User extends SharedEntity {
   @Column({ nullable: true, type: 'timestamp', select: false })
   resetPasswordTokenExpire?: Date;
 
-  @Column({ type: 'enum', enum: CoreProcessStatus, default: CoreProcessStatus.PENDING, nullable: true })
+  @Column({
+    type: 'enum',
+    enum: CoreProcessStatus,
+    default: CoreProcessStatus.PENDING,
+    nullable: true,
+  })
   coreProcessStatus: CoreProcessStatus;
 }

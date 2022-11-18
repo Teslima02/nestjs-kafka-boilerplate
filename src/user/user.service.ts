@@ -33,7 +33,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly tokenService: TokenService,
-    private readonly kafkaService: KafkaService, // @Inject(CORE_SERVICE) private readonly coreClient: ClientKafka,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   async createNewUser(

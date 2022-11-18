@@ -3,24 +3,23 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CreateNewUserDto,
-  CurrentUserResponseDto,
   OtpResponseDto,
   OtpVerificationDto,
   UpdateUserProfileDto,
   UserResponseDto,
 } from './dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Ok } from 'rckg-shared-library/lib/response/rckgResponseType';
-import { RckgAppResponse } from 'rckg-shared-library';
+import { Ok } from '../common/helpers/rckgResponseType';
+import { AppResponse } from '../common/helpers/appresponse';
 /**
  * endpoints to manage users
  */
@@ -39,7 +38,7 @@ export class UserController {
   @Get('/:email/otp/resend')
   async resendOtp(@Param('email') email: string): Promise<Ok<OtpResponseDto>> {
     const resp = await this.userService.resendOtp(email);
-    return RckgAppResponse.Ok(resp, 'OTP resend');
+    return AppResponse.OkSuccess(resp, 'OTP resend', HttpStatus.OK);
   }
 
   @ApiOperation({ description: 'send Otp verification' })
@@ -48,7 +47,7 @@ export class UserController {
     @Body() otpVerification: OtpVerificationDto,
   ): Promise<Ok<UserResponseDto>> {
     const resp = await this.userService.otpVerification(otpVerification);
-    return RckgAppResponse.Ok(resp, 'Email verified');
+    return AppResponse.OkSuccess(resp, 'OTP resend', HttpStatus.OK);
   }
 
   @ApiOperation({ description: 'Otp verification' })
@@ -63,6 +62,6 @@ export class UserController {
       userId,
       updateUserProfileDto,
     );
-    return RckgAppResponse.Ok(resp, 'Email verified');
+    return AppResponse.OkSuccess(resp, 'Email verified', HttpStatus.OK);
   }
 }

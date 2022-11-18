@@ -13,7 +13,7 @@ export enum AppErrorCode {
 }
 
 export class AppResponse {
-  static OkSuccess(obj: object, message = '', status: number) {
+  static OkSuccess(obj: any, message = '', status: number) {
     const res = {
       data: obj,
       message: message,
