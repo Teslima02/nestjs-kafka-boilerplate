@@ -8,11 +8,18 @@ import { RckgAppResponse } from 'rckg-shared-library';
 import { Ok } from 'rckg-shared-library/lib/response/rckgResponseType';
 import { CreateNewUserResponseDto } from 'src/auth/dto/authResponse.dto';
 import { generateOTP, OTPExpireTime } from 'src/common/helpers/global';
-import { CoreProcessStatus, User } from 'src/entities/user.entity';
+import { Hospital } from 'src/entities/hospital.entity';
+import {
+  CoreProcessStatus,
+  User,
+  userRole,
+  vendorName,
+} from '../entities/user.entity';
 import { CREATE_WALLET_CLIENT, CREATE_WALLET_GROUP } from '../kafka/constant';
 import { KafkaPayload } from '../kafka/kafka.message';
 import { KafkaService } from '../kafka/kafka.service';
 import {
+  CreateNewBotDto,
   CreateNewUserDto,
   CurrentUserResponseDto,
   OtpResponseDto,
@@ -31,6 +38,9 @@ import { UserRepository } from './userRepository';
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly hospitalRepository: UserRepository,
+    private readonly laboratoryRepository: UserRepository,
+    private readonly pharmacyRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly tokenService: TokenService,
     private readonly kafkaService: KafkaService,
@@ -68,6 +78,60 @@ export class UserService {
       );
       // this.coreClient.emit(CORE_SERVICE_CREATE_WALLET, createNewUser);
       return RckgAppResponse.Ok(getUser, 'User account created successfully');
+    }
+  }
+
+  async createNewUsers(createNewBotDto: CreateNewBotDto) {
+    const { email, password, vendor, role } = createNewBotDto;
+
+    switch (role) {
+      case userRole.PATIENT:
+        await this.patient(createNewBotDto);
+      case userRole.VENDOR:
+        const user = new User();
+        user.email = email;
+        user.password = await this.tokenService.hashPassword(password);
+        user.vendor = vendor;
+        user.role = userRole.VENDOR;
+        user.coreProcessStatus = CoreProcessStatus.PENDING;
+        const createdUser = await this.userRepository.save(user);
+        if (createdUser) {
+          this.vendors(createdUser, createNewBotDto);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  async patient(createNewBotDto: CreateNewBotDto): Promise<any> {
+    const { email, password, vendor } = createNewBotDto;
+    const user = new User();
+    user.email = email;
+    user.password = await this.tokenService.hashPassword(password);
+    user.vendor = vendor;
+    user.role = userRole.PATIENT;
+    user.coreProcessStatus = CoreProcessStatus.PENDING;
+    return await this.userRepository.save(user);
+  }
+
+  private vendors(vendor: User, createNewBotDto: CreateNewBotDto) {
+    switch (vendor.vendor) {
+      case vendorName.HOSPITAL:
+        const hospital = new Hospital();
+        hospital.name = createNewBotDto.name;
+        hospital.address = createNewBotDto.address;
+        return await this.hospitalRepository.save(hospital);
+        break;
+
+      case vendorName.PHARMACY:
+        break;
+
+      case vendorName.LABORATORY:
+        break;
+
+      default:
+        break;
     }
   }
 

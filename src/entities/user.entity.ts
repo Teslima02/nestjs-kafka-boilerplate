@@ -8,6 +8,18 @@ export enum CoreProcessStatus {
   FAIL = 'fail',
 }
 
+export enum vendorName {
+  HOSPITAL = 'hospital',
+  LABORATORY = 'laboratory',
+  PHARMACY = 'pharmacy',
+}
+
+export enum userRole {
+  ADMIN = 'admin',
+  VENDOR = 'vendor',
+  PATIENT = 'patient',
+}
+
 @Entity()
 export class User extends SharedEntity {
   @Column({ unique: true })
@@ -18,6 +30,12 @@ export class User extends SharedEntity {
 
   @Column({ select: false })
   password: string;
+
+  @Column()
+  vendor?: vendorName;
+
+  @Column()
+  role: userRole;
 
   @Column({ nullable: true, default: null, select: false })
   emailConfirmationOtp?: string; // otp to confirm email

@@ -12,7 +12,7 @@ export class SMSService {
         recipients: [phone],
         message: `Your otp verification is ${otp} `,
       };
-      const smsSender = new SMSSender();
+      const smsSender = new SMSSender('url');
       await smsSender.send(payload);
     }
   }
@@ -23,7 +23,7 @@ export class SMSService {
         recipients: [phone],
         message: `You have successfully change your password. If you don't know anything about this kindly reach out to our customer service to complain`,
       };
-      const smsSender = new SMSSender();
+      const smsSender = new SMSSender('url');
       await smsSender.send(payload);
     }
   }
@@ -34,7 +34,7 @@ export class SMSService {
         recipients: [phone],
         message: `${phone} Welcome to rocket`,
       };
-      const smsSender = new SMSSender();
+      const smsSender = new SMSSender('url');
       await smsSender.send(payload);
     }
   }

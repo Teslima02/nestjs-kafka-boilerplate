@@ -9,6 +9,7 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
+import { vendorName, userRole } from '../../entities/user.entity';
 
 export class CreateNewUserDto {
   @IsEmail()
@@ -29,6 +30,74 @@ export class CreateNewUserDto {
     message: 'password too weak',
   })
   password: string;
+}
+
+export class CreateNewBotDto {
+  @IsEmail()
+  @IsNotEmpty()
+  @Matches(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    {
+      message: 'Invalid email',
+    },
+  )
+  @Transform(({ value }) => value.toLowerCase())
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(8)
+  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/, {
+    message: 'password too weak',
+  })
+  password: string;
+
+  @IsNotEmpty()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  address: string;
+
+  @IsString()
+  vendor?: vendorName;
+
+  @IsString()
+  role: userRole;
+}
+
+export class CreateNewPharmacyDto {
+  @IsEmail()
+  @IsNotEmpty()
+  @Matches(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    {
+      message: 'Invalid email',
+    },
+  )
+  @Transform(({ value }) => value.toLowerCase())
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(8)
+  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/, {
+    message: 'password too weak',
+  })
+  password: string;
+
+  @IsNotEmpty()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  address: string;
+
+  @IsString()
+  vendor?: vendorName;
+
+  @IsString()
+  role: userRole;
 }
 
 export class UpdateUserProfileDto extends PartialType(
